@@ -30,20 +30,14 @@ module.exports = function(grunt) {
 
     // Configuration to be run (and then tested).
     asset_cachekiller: {
-      default_options: {
-        options: {
-        },
-        files: {
-          'tmp/default_options': ['test/fixtures/testing', 'test/fixtures/123']
-        }
+      options: {
+        file: 'test/fixtures/assets.html',
+        length: 12
       },
-      custom_options: {
-        options: {
-          separator: ': ',
-          punctuation: ' !!!'
-        },
+      bust: {
         files: {
-          'tmp/custom_options': ['test/fixtures/testing', 'test/fixtures/123']
+          'tmp/js': ['test/files/*.js'],
+          'tmp/css': ['test/files/style.css']
         }
       }
     },

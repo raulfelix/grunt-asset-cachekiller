@@ -23,26 +23,35 @@ var grunt = require('grunt');
 */
 
 exports.asset_cachekiller = {
-  setUp: function(done) {
-    // setup here if necessary
+  
+  tearDown: function(done) {
+    var content = '<script type="text/javascript" src="tmp/js/main.js"></script><link rel="stylesheet" href="tmp/css/style.css" />';
+    grunt.file.write('test/fixtures/assets.html', content);
+    grunt.file.write('test/files/style.css', 'body {  background-color: #000; }');
+    
     done();
   },
-  default_options: function(test) {
-    test.expect(1);
+  
+  bust: function(test) {
+    test.expect(7);
 
-    var actual = grunt.file.read('tmp/default_options');
-    var expected = grunt.file.read('test/expected/default_options');
-    test.equal(actual, expected, 'should describe what the default behavior is.');
+    var manifest1 = grunt.file.exists('tmp/js/manifest.json');
+    var manifest2 = grunt.file.exists('tmp/css/manifest.json');
+    var hashedjs = grunt.file.exists('tmp/js/9beb708ab971.main.js');
+    var hashedcss = grunt.file.exists('tmp/css/9b5642b54649.style.css');
+    var assetFile = grunt.file.read('test/fixtures/assets.html');
+    var manifestContent1 = grunt.file.readJSON('tmp/js/manifest.json');
+    var manifestContent2 = grunt.file.readJSON('tmp/css/manifest.json');
+    
+    test.ok(manifest1, "js manifest created");
+    test.ok(manifest2, "css manifest created");
+    test.ok(hashedjs, "js hashed file name");
+    test.ok(hashedcss, "css hashed file name");
+    test.equal(assetFile,'<script type="text/javascript" src="tmp/js/9beb708ab971.main.js"></script><link rel="stylesheet" href="tmp/css/9b5642b54649.style.css" />');
+    test.deepEqual(manifestContent1, { 'main.js': '9beb708ab971.main.js' });
+    test.deepEqual(manifestContent2, { 'style.css': '9b5642b54649.style.css' });
 
     test.done();
-  },
-  custom_options: function(test) {
-    test.expect(1);
+  }
 
-    var actual = grunt.file.read('tmp/custom_options');
-    var expected = grunt.file.read('test/expected/custom_options');
-    test.equal(actual, expected, 'should describe what the custom option(s) behavior is.');
-
-    test.done();
-  },
 };
